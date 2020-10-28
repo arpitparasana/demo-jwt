@@ -1,0 +1,10 @@
+server:
+  servlet.context-path: /demojwt
+  port: 8080
+     
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bookishnook?serverTimezone=UTC
+    username: root
+    password: Arpit@123
