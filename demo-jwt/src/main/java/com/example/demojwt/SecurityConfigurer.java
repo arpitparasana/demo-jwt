@@ -1,5 +1,6 @@
 package com.example.demojwt;
 
+import com.example.demojwt.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.demojwt.filters.JwtRequestFilter;
 import com.example.demojwt.service.MyUserDetailsService;
+import org.springframework.security.web.session.SessionManagementFilter;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -29,9 +31,17 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(myUserDetailsService);
 	}
 
+	@Bean
+	CorsFilter corsFilter() {
+		CorsFilter filter = new CorsFilter();
+		return filter;
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll().antMatchers("/public")
+		http
+				.addFilterBefore(corsFilter(), SessionManagementFilter.class)
+				.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll().antMatchers("/public")
 				.permitAll().anyRequest().authenticated().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
